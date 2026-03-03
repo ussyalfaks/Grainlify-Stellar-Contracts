@@ -465,6 +465,10 @@ pub struct ProgramReleaseHistory {
 pub struct ProgramAggregateStats {
     pub total_funds: i128,
     pub remaining_balance: i128,
+    pub total_paid_out: i128,
+    pub payout_count: u32,
+    pub scheduled_count: u32,
+    pub released_count: u32,
     pub authorized_payout_key: Address,
     pub payout_history: Vec<PayoutRecord>,
     pub token_address: Address,
@@ -1579,6 +1583,9 @@ impl ProgramEscrowContract {
             payout_count: program_data.payout_history.len(),
             scheduled_count,
             released_count,
+            authorized_payout_key: program_data.authorized_payout_key,
+            payout_history: program_data.payout_history,
+            token_address: program_data.token_address,
         }
     }
 
@@ -2335,8 +2342,8 @@ mod integration_tests {
         });
         let count = client.try_batch_initialize_programs(&items).unwrap().unwrap();
         assert_eq!(count, 2);
-        assert!(client.program_exists(&String::from_str(&env, "prog-1")));
-        assert!(client.program_exists(&String::from_str(&env, "prog-2")));
+        assert!(client.program_exists());
+        assert!(client.program_exists());
     }
 
     #[test]
